@@ -6,7 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "sender": "node sender/index.js",
     "receiver": "node receiver/index.js",
-    "start": "concurrently -k \"node sender/index.js\" \"node receiver/index.js\""
+    "start": "concurrently -k \"npm run sender\" \"npm run receiver\""
   },
   "author": "",
   "license": "ISC",
