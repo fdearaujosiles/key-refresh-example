@@ -1,8 +1,8 @@
-const { answerSignal, initSignal } = require('./receiver');
+const { answerSignal, initKey } = require('./receiver');
 const router = require('express').Router();
 
 router.route('/init')
-    .get(initSignal);
+    .get((req, res) => res.send(initKey()));
 
 router.route('/auth')
     .get(answerSignal);

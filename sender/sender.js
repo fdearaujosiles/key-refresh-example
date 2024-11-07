@@ -11,28 +11,34 @@ class Signal {
     }
     
     async getKey() {
-        console.log("\n\nAsked for a new key")
-        const key = (await (await fetch(RECEIVER_URL + "init")).json()).key
-        console.log("Got key " + key)
+        const key = await fetchJson(RECEIVER_URL + "init")
         return key
     }
 
     async sendSignal(key) {
-        console.log("Sending refresh request for key " + key)
-        const resp = await (await fetch(RECEIVER_URL + "auth?key=" + key)).json()
-        if(resp.key) {
-            console.log("Key " + key + " refreshed succesfully!")
-            console.log("New key " + resp.key)
-            this.key = resp.key
+        const newKey = await fetchJson(RECEIVER_URL + "auth?key=" + key)
+        if(newKey) {
+            this.key = newKey
             this.updateTimeout()
         } else {
-            console.log("Key " + key + " is not authorized")
             this.init()
         }
     }
 
     updateTimeout() {
         this.timeout = setTimeout(() => this.sendSignal(this.key), REFRESH_TIME + (500 * (Math.random() > 0.9 ? 1 : -1)));
+    }
+}
+
+async function fetchJson(url) {
+    try {
+        return await (await fetch(url)).json()
+    } catch(err) {
+        if(err instanceof TypeError && err.message === "fetch failed") {
+            return null;
+        } else {
+            throw err;
+        }
     }
 }
 
